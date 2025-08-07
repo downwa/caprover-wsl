@@ -8,15 +8,15 @@ solutions (the definition of insanity).  On the other hand, with some manual deb
 This solution consists of two files that must be placed in the same directory:
 
 1. install-caprover-wsl.bat: The main Windows batch file you will run. It handles Windows-specific tasks, checks for prerequisites, and then calls the Linux script.
-2. setup_caprover_inside_wsl.sh: A Linux shell script that contains the precise, battle-tested sequence of Docker commands to correctly install CapRover inside your WSL environment.
+2. setup_caprover_inside_wsl.sh: A Linux shell script that contains the Docker commands to correctly install CapRover inside your WSL environment.
 
 How to Use
 
 1. Save both files (install-caprover-wsl.bat and setup_caprover_inside_wsl.sh) in the same folder on your Windows machine.
-2. Ensure Docker Desktop is running.
+2. Ensure Docker Desktop is running or Docker is installed within WSL.
 3. Right-click on install-caprover-wsl.bat and select "Run as administrator".
-4. The script will handle stopping the Windows service and checking for Docker.
-5. It will then open a WSL terminal window and execute the Linux script.
+4. The script will handle stopping the Windows service (that takes over port 80) and checking for Docker.
+5. It will then open a WSL terminal window and execute the Linux script to install CapRover.
 6. When prompted by the Linux script, enter your server's public IP address and press Enter.
 7. The script will complete the entire cleanup and installation process automatically.
 8. When it finishes, it will display the URL and default password for you to log in.
