@@ -85,3 +85,34 @@ Follow these steps to deploy your static website.  This example is for a SvelteK
 	- Under "Method 2: Upload Tarball", drag and drop the deploy.tar file you just created.
 4. Watch the Build: The "Deployment Progress" window will appear, and you will see the live build logs from your Dockerfile being executed. It will end with a "Build has finished successfully!" message.
 5. Verify: Your site is now live! You can access it at the URL provided on the app's dashboard, such as https://www.example.com
+
+## Phase 2: Building and Testing
+
+Test your application fully
+
+## Phase 3: The "Go Live" Migration (The Safe Method)
+
+This is where we carefully navigate around the warning.
+
+- Step 3a: Temporarily Disable HTTPS in CapRover
+This is the key step that "unlocks" the root domain field.
+1. Log in to your CapRover dashboard.
+2. Go to the Dashboard tab.
+3. Click the Disable HTTPS button. This will tell CapRover to stop managing certificates and revert to HTTP. Your site will be temporarily insecure, which is fine as we are in a maintenance window.
+4. 
+
+- Step 3b: Update the Root Domain
+1. With HTTPS disabled, the "Root Domain" field is now editable again.
+2. Change the domain from data.choggiung.com to choggiung.com.
+3. Click Update Domain.
+
+- Step 3c: The DNS Switch
+1. Go to your DNS provider.
+2. Delete the old A records for data and *.data.
+3. Create the new A records for @ (or choggiung.com) and * pointing to your server IP.
+
+- Step 3d: Re-enable HTTPS
+1. Wait for the new DNS records to propagate (you can use a tool like dnschecker.org to verify).
+2. Go back to the CapRover Dashboard.
+3. Click Enable HTTPS.
+CapRover will now perform the Let's Encrypt process for the new domain, example2.com and *.example2.com. Since this is a different set of domains, you will not hit any rate limits.
