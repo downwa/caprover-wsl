@@ -64,6 +64,7 @@ Follow these steps to deploy your static website.  This example is for a SvelteK
 
 
 &#x200B;
+
 	- **captain-definition** (tells CapRover to use your Dockerfile):
 
 ````
