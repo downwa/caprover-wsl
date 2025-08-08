@@ -59,6 +59,7 @@ Follow these steps to deploy your static website.  This example is for a SvelteK
 	# default web root directory of the Nginx container.
 	COPY ./build /usr/share/nginx/html
 ```
+
 	- captain-definition (tells CapRover to use your Dockerfile):
 ```
 	{
