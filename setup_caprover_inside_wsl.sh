@@ -2,19 +2,22 @@
 
 # =============================================================================
 # CapRover WSL Installation Script (Linux Guest)
+# Version 1.0
 # =============================================================================
-# This script performs the final, manual installation of CapRover.
-# It is designed to be called by the Windows batch script.
+# This script performs the final, manual installation of CapRover. It is
+# designed to be called by the Windows batch script.
 #
 # This specific sequence is required to work around several bugs and race
 # conditions present when installing CapRover in a WSL environment:
 # 1. Manually creates the swarm to avoid installer conflicts.
-# 2. Manually creates the /captain directory to avoid a bug where the
-#    installer creates services with invalid mount paths.
-# 3. Uses the IS_CAPTAIN_INSTANCE=true flag to force the container to run
-#    as the application, not the installer.
+# 2. Manually creates the /captain directory on the host to avoid a bug where
+#    CapRover creates child services with invalid mount paths.
+# 3. Uses IS_CAPTAIN_INSTANCE=true flag to force the container to run as the
+#    application, not the installer.
 # 4. Uses BY_PASS_PROXY_CHECK=true to avoid network self-test failures
 #    common in WSL/NAT environments.
+# 5. Applies network aliases to the captain-nginx service to fix the internal
+#    health check crash loop.
 # =============================================================================
 
 # Exit immediately if a command exits with a non-zero status.
@@ -28,8 +31,9 @@ NC='\033[0m' # No Color
 echo -e "${GREEN}Starting CapRover setup inside WSL...${NC}"
 echo
 
-# --- Prompt for Public IP ---
+# --- Prompt for User Input ---
 read -p "Please enter your server's public IP address: " PUBLIC_IP
+read -p "Please enter your CapRover root domain (e.g., data.choggiung.com): " ROOT_DOMAIN
 
 if ! [[ $PUBLIC_IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     echo -e "${YELLOW}ERROR: Invalid IP address format. Exiting.${NC}"
@@ -37,12 +41,14 @@ if ! [[ $PUBLIC_IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 fi
 
 echo -e "${GREEN}Using Public IP: $PUBLIC_IP${NC}"
+echo -e "${GREEN}Using Root Domain: $ROOT_DOMAIN${NC}"
 echo
 
-# --- Step 1: Full Cleanup ---
+# --- Step 1: Full and Complete Cleanup ---
 echo -e "${GREEN}Performing full cleanup of any previous CapRover installation...${NC}"
-# The '|| true' prevents the script from failing if the services don't exist
+# The '|| true' prevents the script from failing if the resources don't exist
 docker service rm captain-captain captain-nginx captain-certbot >/dev/null 2>&1 || true
+docker secret rm captain-salt >/dev/null 2>&1 || true
 docker swarm leave --force >/dev/null 2>&1 || true
 sudo rm -rf /captain
 echo "Cleanup complete."
@@ -57,7 +63,7 @@ sudo mkdir -p /captain
 echo "Environment prepared."
 echo
 
-# --- Step 3: Deploy CapRover Application Service ---
+# --- Step 3: Deploy Main Service and Patch Nginx ---
 echo -e "${GREEN}Deploying the main CapRover application service...${NC}"
 docker service create \
   --name captain-captain \
@@ -72,8 +78,23 @@ docker service create \
   -e IS_CAPTAIN_INSTANCE='true' \
   caprover/caprover:1.14.0
 
-echo "Main service created. Waiting for services to stabilize..."
-sleep 45 # Give time for nginx and certbot to be created and start
+echo "Main service created. Waiting for Nginx service to appear..."
+while ! docker service inspect captain-nginx >/dev/null 2>&1; do
+    sleep 1
+done
+while ! docker network inspect captain-overlay-network >/dev/null 2>&1; do
+    sleep 1
+done
+
+echo "Nginx service found! Applying network alias patch to fix health checks..."
+# Disconnect and reconnect the service to the network to add the required aliases.
+docker network disconnect captain-overlay-network captain-nginx
+docker network connect \
+  --alias "captain.$ROOT_DOMAIN" \
+  --alias "$ROOT_DOMAIN" \
+  captain-overlay-network captain-nginx
+echo "Patch applied. Waiting for services to stabilize..."
+sleep 30
 
 # --- Step 4: Final Verification ---
 echo
