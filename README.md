@@ -41,7 +41,7 @@ After the script finishes successfully, follow these steps in your browser.
 4. Enable HTTPS:
 	- Enter a valid email address. Let's Encrypt will use this to send you notifications about your SSL certificates.
 	- Click the "Enable HTTPS" button.
-	- Wait a minute or two. CapRover will automatically obtain SSL certificates for your root domain (yourdomain.com) and the wildcard (*.yourdomain.com). The page will reload, and you will be on a secure https connection.
+	- Wait a minute or two. CapRover will automatically obtain SSL certificates for your root domain (example.com) and the wildcard (*.example.com). The page will reload, and you will be on a secure https connection.
 5. Acknowledge the HTTPS Warning: You will see the message: "IMPORTANT: Once you enable HTTPS, you cannot edit the root domain ever again." This is a strong precaution. You can change it later by temporarily disabling HTTPS, but this initial setup is now complete.
 
 ---
@@ -77,4 +77,4 @@ Follow these steps to deploy your static website.  This example is for a SvelteK
 	- Go to the new app's "Deployment" tab.
 	- Under "Method 2: Upload Tarball", drag and drop the deploy.tar file you just created.
 4. Watch the Build: The "Deployment Progress" window will appear, and you will see the live build logs from your Dockerfile being executed. It will end with a "Build has finished successfully!" message.
-5. Verify: Your site is now live! You can access it at the URL provided on the app's dashboard, such as https://www.yourdomain.com
+5. Verify: Your site is now live! You can access it at the URL provided on the app's dashboard, such as https://www.example.com
