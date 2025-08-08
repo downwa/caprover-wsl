@@ -11,7 +11,7 @@ setlocal
 ::
 :: Prerequisites:
 :: 1. Windows 10/11 with WSL2 installed.
-:: 2. Docker Desktop for Windows installed and running.
+:: 2. Docker Desktop for Windows (or docker inside WSL) installed and running.
 :: 3. The 'setup_caprover_inside_wsl.sh' script must be in the same directory.
 :: =============================================================================
 
