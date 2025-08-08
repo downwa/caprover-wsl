@@ -49,7 +49,7 @@ After the script finishes successfully, follow these steps in your browser.
 
 Follow these steps to deploy your static website.  This example is for a SvelteKit site, but the process should be similar for other static sites.
 1. Prepare Your Project: In the root of your SvelteKit project, you need two configuration files.
-	- Dockerfile (tells Docker how to build your site's container):
+	# - Dockerfile (tells Docker how to build your site's container):
 ```
 	# Use a lightweight, official Nginx image as the base
 	FROM nginx:1.27-alpine
@@ -60,7 +60,7 @@ Follow these steps to deploy your static website.  This example is for a SvelteK
 	COPY ./build /usr/share/nginx/html
 ```
 
-	- captain-definition (tells CapRover to use your Dockerfile):
+	# - captain-definition (tells CapRover to use your Dockerfile):
 ```
 	{
 	  "schemaVersion": 2,
