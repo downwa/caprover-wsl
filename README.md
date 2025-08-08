@@ -5,9 +5,16 @@ If like me you are running a Windows server but would also like to run CapRover 
 These two scripts were produced through a trial and error session (with the aid of Gemini 2.5 Pro).  On the one hand, the AI assistant repeatedly suggested previously tried
 solutions (the definition of insanity).  On the other hand, with some manual debugging and the right prompts it eventually helped with a working solution.
 
+Here is... 
+# The Complete Guide to Installing CapRover on WSL
+This guide provides a fail-safe, two-script installation process and step-by-step instructions for the subsequent web-based setup and deployment of a static website.
+
+# Introduction: Why is this necessary?
+Installing CapRover on WSL presents a unique set of challenges due to the underlying networking (NAT hairpinning), filesystem interactions, and several bugs or edge cases within the CapRover startup scripts. This guide provides a tested manual installation that bypasses these issues, resulting in a stable and fully functional CapRover instance.
+
 This solution consists of two files that must be placed in the same directory:
 
-1. install-caprover-wsl.bat: The main Windows batch file you will run. It handles Windows-specific tasks, checks for prerequisites, and then calls the Linux script.
+1. install-caprover-wsl.bat: The main Windows batch file you will run. It handles Windows-specific tasks, checks for prerequisites, and then calls the Linux script.  *It must be run as an Administrator*.
 2. setup_caprover_inside_wsl.sh: A Linux shell script that contains the Docker commands to correctly install CapRover inside your WSL environment.
 
 How to Use
