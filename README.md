@@ -50,7 +50,7 @@ After the script finishes successfully, follow these steps in your browser.
 Follow these steps to deploy your static website.  This example is for a SvelteKit site, but the process should be similar for other static sites.
 1. Prepare Your Project: In the root of your SvelteKit project, you need two configuration files.
    
-	**Dockerfile** (tells Docker how to build your site's container):
+**Dockerfile** (tells Docker how to build your site's container):
 
 ```
 	# Use a lightweight, official Nginx image as the base
