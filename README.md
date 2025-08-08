@@ -66,12 +66,12 @@ Follow these steps to deploy your static website.  This example is for a SvelteK
 
 	- **captain-definition** (tells CapRover to use your Dockerfile):
 
-```
+````
 	{
 	  "schemaVersion": 2,
 	  "dockerfilePath": "./Dockerfile"
 	}
-```
+````
 
 2. Build and Package Your Site:
 	- First, run your local build command to generate the static files:
