@@ -54,6 +54,17 @@ sudo rm -rf /captain
 echo "Cleanup complete."
 echo
 
+# --- Step 1.5: Prepare Host DNS ---
+echo -e "${GREEN}Preparing host DNS...${NC}"
+cat > /etc/docker/daemon.json <<EOF
+{
+  "dns": ["1.1.1.1", "1.0.0.1"]
+}
+EOF
+
+# Restart the Docker Daemon: After saving the changes, restart the Docker daemon for them to take effect: 
+sudo systemctl restart docker
+
 # --- Step 2: Prepare Host Environment ---
 echo -e "${GREEN}Preparing Docker Swarm and required directories...${NC}"
 docker swarm init --advertise-addr "$PUBLIC_IP"
@@ -87,6 +98,7 @@ while ! docker network inspect captain-overlay-network >/dev/null 2>&1; do
 done
 
 echo "Nginx service found! Applying network alias patch to fix health checks..."
+
 # Disconnect and reconnect the service to the network to add the required aliases.
 docker network disconnect captain-overlay-network captain-nginx
 docker network connect \
@@ -99,6 +111,26 @@ sleep 30
 # --- Step 4: Final Verification ---
 echo
 echo -e "${GREEN}Verifying installation status...${NC}"
+
+cid=$(docker ps | grep caprover/caprover: | awk '{print $1}')
+if [ "$cid" != "" ]; then
+    hcIP=$(docker exec $cid nslookup captain.data.choggiung.com | grep ^Address: | tail -n 1 | awk '{print $2}')
+    if [ "$hcIP" = "$PUBLIC_IP" ]; then
+        echo "Health check IP resolves correctly to: $hcIP"
+    else
+        echo "Health check will fail.  Enabling temporary workaround!!!!"
+        # If the DNS doesn't resolve to the external IP address or at least to the internal nginx address, the health check will fail
+        cat >/captain/data/config-override.json <<EOF
+json
+{
+  "skipVerifyingDomains": "true"
+}
+EOF
+        docker service update captain-captain --force
+    fi
+else
+    echo "Missing caprover container!"
+fi
 docker service ls
 echo
 
