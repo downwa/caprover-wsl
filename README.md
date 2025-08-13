@@ -31,6 +31,11 @@ How to Use
 9. When prompted by the Linux script, enter your server's root domain and press Enter.
 10. The script will complete the entire cleanup and installation process automatically.
 11. When it finishes, it will display the URL and default password for you to log in.
+12. To stabilize usage, you need to add aliases for the network:
+
+cid=$(docker ps | grep nginx | sed -e 's/.*captain/captain/g')
+docker network disconnect captain-overlay-network $cid
+docker network connect   --alias captain.data.choggiung.com   --alias data.choggiung.com   captain-overlay-network $cid
 
 # Part 2: First-Time CapRover Setup (Web UI)
 After the script finishes successfully, follow these steps in your browser.
