@@ -33,7 +33,7 @@ echo
 
 # --- Prompt for User Input ---
 read -p "Please enter your server's public IP address: " PUBLIC_IP
-read -p "Please enter your CapRover root domain (e.g., data.choggiung.com): " ROOT_DOMAIN
+read -p "Please enter your CapRover root domain (e.g., data.mydomain.com): " ROOT_DOMAIN
 
 if ! [[ $PUBLIC_IP =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
     echo -e "${YELLOW}ERROR: Invalid IP address format. Exiting.${NC}"
@@ -114,7 +114,7 @@ echo -e "${GREEN}Verifying installation status...${NC}"
 
 cid=$(docker ps | grep caprover/caprover: | awk '{print $1}')
 if [ "$cid" != "" ]; then
-    hcIP=$(docker exec $cid nslookup captain.data.choggiung.com | grep ^Address: | tail -n 1 | awk '{print $2}')
+    hcIP=$(docker exec $cid nslookup captain.${ROOT_DOMAIN} | grep ^Address: | tail -n 1 | awk '{print $2}')
     if [ "$hcIP" = "$PUBLIC_IP" ]; then
         echo "Health check IP resolves correctly to: $hcIP"
     else
